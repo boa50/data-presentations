@@ -6,8 +6,8 @@ const data = [
     { group: 'Company B', value: 90 },
     { group: 'Our Company', value: 82 },
     { group: 'Company D', value: 79 },
-    { group: 'Company E', value: 70 },
-    { group: 'Company F', value: 46 },
+    { group: 'Company E', value: 67 },
+    { group: 'Company F', value: 48 },
 ]
 
 const xAxisType = document.getElementById('chart-xaxis-type')
