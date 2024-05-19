@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@types/d3": "^7.4.3"
+    "@types/d3": "^7.4.3",
+    "visual-components": "github:boa50/visual-components"
   }
 }

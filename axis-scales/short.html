@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Axis Scales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black font-sans">
+    <div class="grid grid-cols-2 h-screen">
+        <div class="grid h-screen">
+            <div class="bg-white/95 px-4 py-2 rounded-sm aspect-[9/16] h-[95vh] justify-self-center self-center">
+                <div id="chart1-container" class="h-[95vh]">
+                    <h3 id="chart1-title" class="text-xl text-gray-700 font-medium">Average Wage by Gender</h3>
+                    <svg id="chart1"></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white">
+            <select name="chart-xaxis-type" id="chart-xaxis-type">
+                <option value="linear">Linear</option>
+                <option value="log">Logarithmic</option>
+                <option value="pow">Exponential</option>
+            </select>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script type="module" src="./short.js"></script>
+</body>
