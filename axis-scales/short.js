@@ -2,8 +2,8 @@ import { getChart, addAxis, getMargin, updateYaxis } from "../node_modules/visua
 import { palette, defaultColours as colours } from "../colours.js"
 
 const data = [
-    { group: 'Men', value: 100 },
-    { group: 'Women', value: 50 },
+    { group: 'Women', value: 100 },
+    { group: 'Men', value: 50 },
 ]
 
 const xAxisType = document.getElementById('chart-xaxis-type')
@@ -23,7 +23,7 @@ const x = d3
 
 const colour = d3
     .scaleOrdinal()
-    .range([palette.blue, palette.reddishPurple])
+    .range([palette.reddishPurple, palette.blue])
 
 chart
     .selectAll('.data-point')
