@@ -8,7 +8,7 @@ const data = [
 
 const xAxisType = document.getElementById('chart-xaxis-type')
 
-const { chart, width, height } = getChart({ id: 'chart1', margin: getMargin({ bottom: 128, top: 32, left: 86, right: 48 }) })
+const { chart, width, height } = getChart({ id: 'chart1', margin: getMargin({ bottom: 128, top: 32, left: 92, right: 48 }) })
 
 let y = d3
     .scaleLinear()
