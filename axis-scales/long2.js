@@ -1,4 +1,4 @@
-import { getChart, addAxis, getMargin, updateXaxis, addCircleLegend, addLegend } from "../node_modules/visual-components/index.js"
+import { getChart, addAxis, getMargin, updateXaxis, addCircleLegend, addLegend, addHighlightTooltip } from "../node_modules/visual-components/index.js"
 import { palette, defaultColours } from "../colours.js"
 
 const getData = () =>
@@ -15,6 +15,8 @@ const getData = () =>
             })
         )
 
+const formatGdp = d => `$${(d >= 10000) ? d3.format('.3s')(d).replace('.0', '') : d}`
+const xTickValues = [...Array(9).keys()].map(i => 500 * Math.pow(2, i))
 
 getData().then(data => {
     const { chart, width, height } = getChart({
@@ -22,9 +24,11 @@ getData().then(data => {
         margin: getMargin({ bottom: 100, top: 16, left: 64, right: 48 })
     })
 
+    const xExtent = d3.extent(data, d => d.gdpPerCapita).map((d, i) => d * [0.7, 1.05][i])
+
     const x = d3
         .scaleLinear()
-        .domain(d3.extent(data, d => d.gdpPerCapita).map((d, i) => d * [0.7, 1.05][i]))
+        .domain(xExtent)
         .range([0, width])
 
     const y = d3
@@ -45,21 +49,7 @@ getData().then(data => {
         .domain(uniqueRegions)
         .range(continentColours)
 
-
-    chart
-        .selectAll('.country-bubbles')
-        .data(data)
-        .join('circle')
-        .attr('class', 'country-bubbles')
-        .style('fill', d => colour(d.region))
-        .attr('stroke', '#6b7280')
-        .attr('stroke-width', 0.5)
-        .style('opacity', 0.75)
-        .transition('updateChart')
-        .duration(100)
-        .attr('cx', d => x(d.gdpPerCapita))
-        .attr('cy', d => y(d.lifeExpectancy))
-        .attr('r', d => radius(d.population))
+    updateChart(chart, data, x, y, radius, colour)
 
     addAxis({
         chart,
@@ -69,11 +59,11 @@ getData().then(data => {
         y,
         xLabel: 'GDP per capita (PPP$2017)',
         yLabel: 'Life expectancy (years, at birth)',
-        xFormat: d => `$${(d >= 10000) ? d3.format('.3s')(d).replace('.0', '') : d
-            }`,
+        xFormat: formatGdp,
         colour: defaultColours.axis,
-        // xTickValues: [...Array(9).keys()].map(i => 500 * Math.pow(2, i))
+        xTickValues
     })
+    updateXaxis({ chart, x, format: formatGdp, tickValues: xTickValues })
 
     addLegend({
         chart,
@@ -87,11 +77,81 @@ getData().then(data => {
     addCircleLegend({
         chart,
         sizeScale: radius,
-        valuesToShow: [maxPopulation * 0.25, maxPopulation * 0.5, maxPopulation],
+        valuesToShow: [maxPopulation * 0.1, maxPopulation * 0.4, maxPopulation],
         xPosition: width - 125,
         yPosition: height - 25,
         colour: defaultColours.axis,
         title: 'Population',
         textFormat: d => d3.format('.2s')(d).replace('G', 'B')
     })
+
+    addHighlightTooltip({
+        chart,
+        htmlText: d => `
+        <strong>${d.country}</strong>   
+        <div style="display: flex; justify-content: space-between">
+            <span>Population:&emsp;&emsp;</span>
+            <span>${d3.formatLocale({ thousands: ' ', grouping: [3] }).format(',')(d.population)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+            <span>Life Expectancy:&emsp;&emsp;</span>
+            <span>${d.lifeExpectancy} years</br></span>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+            <span>GDP per Capita:&emsp;&emsp;</span>
+            <span>$${d.gdpPerCapita}</span>
+        </div>
+        `,
+        elements: chart.selectAll('.country-bubbles'),
+        fadedOpacity: 0.5,
+        chartWidth: width,
+        chartHeight: height
+    })
+
+    addXaxisListener(chart, data, width, xExtent, y, radius, colour)
 })
+
+function updateChart(chart, data, x, y, radius, colour) {
+    chart
+        .selectAll('.country-bubbles')
+        .data(data)
+        .join('circle')
+        .attr('class', 'country-bubbles')
+        .style('fill', d => colour(d.region))
+        .attr('stroke', '#6b7280')
+        .attr('stroke-width', 0.5)
+        .style('opacity', 0.75)
+        .transition('updateChart')
+        .duration(500)
+        .attr('cx', d => x(d.gdpPerCapita))
+        .attr('cy', d => y(d.lifeExpectancy))
+        .attr('r', d => radius(d.population))
+}
+
+function addXaxisListener(chart, data, width, xExtent, y, radius, colour) {
+    const xAxisType = document.getElementById('chart-xaxis-type')
+
+    xAxisType.addEventListener('change', () => {
+        let x
+
+        switch (xAxisType.value) {
+            case 'linear':
+                x = d3
+                    .scaleLinear()
+                    .domain(xExtent)
+                    .range([0, width])
+                break;
+            case 'log':
+                x = d3
+                    .scaleLog()
+                    .domain(xExtent)
+                    .range([0, width])
+                    .base(2)
+                break;
+        }
+
+        updateChart(chart, data, x, y, radius, colour)
+
+        updateXaxis({ chart, x, format: formatGdp, tickValues: xTickValues })
+    })
+}
