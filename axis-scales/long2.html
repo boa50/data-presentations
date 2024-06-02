@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Axis Scales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/visual-components/html/select/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black font-sans">
+    <div class="grid h-screen">
+        <div class="bg-gray-300 aspect-video h-[95vh] justify-self-center self-center">
+            <!-- HEADER -->
+            <div id="header" class="flex flex-row p-4 mb-4 bg-slate-50 sticky top-0">
+                <div class="flex flex-row self-center items-center">
+                    <!-- PAGE LOGO -->
+                    <img src="./img/logo.svg" alt="dashboard logo" class="max-h-10 mx-4" />
+                    <h1 id="title" class="text-3xl text-gray-600 self-center font-medium">Axis Scales</h1>
+                </div>
+
+                <div class="flex-auto"></div>
+
+                <!-- RIGHT SIDE HEADER -->
+                <div id="controls" class="flex flex-row space-x-8 mr-8">
+                    <div class="flex flex-col">
+                        <label for="chart-xaxis-type" class="text-sm text-gray-600 mb-px">X axis type</label>
+                        <div class="select">
+                            <select name="chart-xaxis-type" id="chart-xaxis-type">
+                                <option value="linear">Linear</option>
+                                <option value="log">Logarithmic</option>
+                                <option value="pow">Exponential</option>
+                            </select>
+                            <span class="focus"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="mx-8">
+                <div id="charts" class="grid grid-cols-1 gap-8">
+                    <div class="bg-white/75 px-4 py-2 rounded-sm">
+                        <div id="chart1-container" class="h-[80vh]">
+                            <h3 class="text-xl text-gray-700 font-medium">World Health</h3>
+                            <svg id="chart1"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script type="module" src="./long2.js"></script>
+</body>
